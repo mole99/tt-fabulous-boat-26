@@ -16,4 +16,5 @@ jobs:
       - name: Build docs
         uses: TinyTapeout/tt-gds-action/docs@ttboat26
         with:
+          pdk: gf180mcuD
           tools-ref: gf180-xxl
