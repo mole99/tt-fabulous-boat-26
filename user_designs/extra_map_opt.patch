@@ -1,0 +1,12 @@
+diff --git a/techlibs/fabulous/synth_fabulous.cc b/techlibs/fabulous/synth_fabulous.cc
+index 49f84294e..6e51e6cb4 100644
+--- a/techlibs/fabulous/synth_fabulous.cc
++++ b/techlibs/fabulous/synth_fabulous.cc
+@@ -413,6 +413,7 @@ struct SynthPass : public ScriptPass {
+ 				run(map_str);
+ 			}
+ 			run("simplemap");
++			run("opt_merge");
+ 			run("clean");
+ 		}
+ 

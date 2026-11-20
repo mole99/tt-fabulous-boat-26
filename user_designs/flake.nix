@@ -58,6 +58,15 @@
               ];
             };
           })
+          (final: prev: {
+            yosys = (prev.yosys.overrideAttrs {
+              patches = [
+                ./extra_map_opt.patch
+              ];
+            }).override {
+              sha256 = "sha256-2Ck2vxkE5F84FJdpe5JpULLUAU73RqmGtIfccxiDwr0=";
+            };
+          })
         ];
       };
 

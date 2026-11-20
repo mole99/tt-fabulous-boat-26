@@ -92,6 +92,9 @@ jobs:
         with:
           nix_system: x86_64-linux
           derivation: github:mole99/librelane_plugin_fabulous
+      - name: Set up the PDK
+        run: |
+          nix develop --command ciel enable --pdk-family gf180mcuD ciel enable 792ef67037d74c8c51811eab3ce23cf793491296 -l gf180mcu_as_sc_mcu7t3v3 -l gf180mcu_ocd_ip_sram
       - name: Get the tile library
         run: |
           echo "TILE_LIBRARY=$(echo "${{ matrix.fabrics }}" | cut -d'_' -f1)" >> $GITHUB_ENV
@@ -131,9 +134,6 @@ jobs:
       - name: Simulate the FPGA RTL (Simulation)
         run: |
           PDK=${{ matrix.pdk }} SCL=${{ matrix.scl }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ matrix.fabrics }} nix develop --command bash -c "cd tb; python3 top_tb.py"
-      - name: Set up the PDK
-        run: |
-          nix develop --command ciel enable --pdk-family gf180mcuD 792ef67037d74c8c51811eab3ce23cf793491296 --include-libraries all
       - name: Simulate the FPGA RTL/GL (Simulation)
         run: |
           GL=1 PDK=${{ matrix.pdk }} SCL=${{ matrix.scl }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ matrix.fabrics }} nix develop --command bash -c "cd tb; python3 top_tb.py"

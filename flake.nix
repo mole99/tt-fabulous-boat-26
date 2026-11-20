@@ -9,9 +9,9 @@
   };
 
   inputs = {
-    librelane.url = "github:librelane/librelane/dev";
+    librelane.url = "github:librelane/librelane/leo/update-pdks";
     librelane_plugin_fabulous = {
-      url = "github:mole99/librelane_plugin_fabulous/1.14.1";
+      url = "github:mole99/librelane_plugin_fabulous/1.17.0";
       inputs.librelane.follows = "librelane";
     };
   };
@@ -47,6 +47,15 @@
                 ];
               };
             })
+            (nix-eda.composePythonOverlay (
+              pkgs': pkgs: pypkgs': pypkgs:
+              let
+                callPythonPackage = lib.callPackageWith (pkgs' // pypkgs');
+              in
+              {
+                librelane-plugin-extra = callPythonPackage ./default.nix { };
+              }
+            ))
           ];
         }
       );
@@ -63,7 +72,10 @@
         in
         {
           default = pkgs.librelane-shell.override ({
-            librelane-plugins = ps: with ps; [librelane-plugin-fabulous];
+            librelane-plugins = ps: with ps; [
+              librelane-plugin-fabulous
+              librelane-plugin-extra
+            ];
             extra-packages = with pkgs; [
               # Utilities
               gnumake

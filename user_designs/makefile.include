@@ -28,11 +28,14 @@ EXTRA_PLIBS_PATH 	 = -extra-plib ../../../../ip/fabulous-tiles/primitives/FABULO
 			   -extra-plib ../../../../ip/fabulous-tiles/primitives/OBUF/yosys/primitives/OBUF.v \
 			   -extra-plib ../../../../ip/fabulous-tiles/primitives/TBUF/yosys/primitives/TBUF.v \
 			   -extra-plib ../../../../ip/fabulous-tiles/primitives/GBUF/yosys/primitives/GBUF.v \
-   			   -extra-plib ../../../../ip/fabulous-tiles/primitives/SYS_RESET/yosys/primitives/SYS_RESET.v
-
+   			   -extra-plib ../../../../ip/fabulous-tiles/primitives/SYS_RESET/yosys/primitives/SYS_RESET.v \
+   			   -extra-plib ../../../../ip/extra-tiles/primitives/GF_SRAM_256x8_1RW/yosys/primitives/GF_SRAM_256x8_1RW.v
 
 EXTRA_MAPS_PATH		 = -extra-map ../../../../ip/fabulous-tiles/primitives/FABULOUS_LC/yosys/techmap/ff_map.v \
-			   -extra-map ../../../../ip/fabulous-tiles/primitives/IOBUF/yosys/techmap/IOBUF_map.v
+			   -extra-map ../../../../ip/fabulous-tiles/primitives/IOBUF/yosys/techmap/IOBUF_map.v \
+			   -extra-map ../../../../ip/extra-tiles/primitives/GF_SRAM_256x8_1RW/yosys/techmap/GF_SRAM_256x8_1RW_map.v
+
+EXTRA_MLIBMAPS_PATH	 = -extra-mlibmap ../../../../ip/extra-tiles/primitives/GF_SRAM_256x8_1RW/yosys/memlib/GF_SRAM_256x8_1RW_lib.txt
 
 CLKBUF_MAP_PATH		 = -clkbuf-map ../../../../ip/fabulous-tiles/primitives/GBUF/yosys/techmap/GBUF_map.v
 

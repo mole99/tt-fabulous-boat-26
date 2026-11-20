@@ -68,16 +68,16 @@
         "nix-eda": "nix-eda"
       },
       "locked": {
-        "lastModified": 1793033931,
-        "narHash": "sha256-BkGX5RSjWYHZnXgffs9f6B6TVCGvyA9G0Z7f0lW+X7M=",
+        "lastModified": 1795166529,
+        "narHash": "sha256-by+Ah6FjE+zfH5eYCh2hUeO1pqrdxkEv89P8+fIyh3U=",
         "owner": "librelane",
         "repo": "librelane",
-        "rev": "04a597af699f25974ff8ef0aa6d2002b3f5f3b41",
+        "rev": "e40a1dc705ea9a748019ba13af3d70c133dcc074",
         "type": "github"
       },
       "original": {
         "owner": "librelane",
-        "ref": "dev",
+        "ref": "leo/update-pdks",
         "repo": "librelane",
         "type": "github"
       }
@@ -89,16 +89,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1786364064,
-        "narHash": "sha256-jr94ZizyUAeR8yUQ2U5P+z24jRFkKaQtTfFTZe43Vw4=",
+        "lastModified": 1794415027,
+        "narHash": "sha256-LmCMYVBfC7Q+PdB4UC4UFLa0DYnDZzfbMdEVrMmX2oo=",
         "owner": "mole99",
         "repo": "librelane_plugin_fabulous",
-        "rev": "47d941dd1a1edec7ddea818c169576c9f90d7cde",
+        "rev": "b2306e720cd6d1ae75c85ccf4e99f6fffb038ae5",
         "type": "github"
       },
       "original": {
         "owner": "mole99",
-        "ref": "1.14.1",
+        "ref": "1.17.0",
         "repo": "librelane_plugin_fabulous",
         "type": "github"
       }
@@ -108,16 +108,16 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1791256612,
-        "narHash": "sha256-KOSQsHtzZvAVqUklgVdgKloPoTZ5gns7BMxIpnyPi8E=",
+        "lastModified": 1794131366,
+        "narHash": "sha256-ZtcI88sRJtKcSooxPkOx4H43sy8odrFYLY37JObbUhI=",
         "owner": "fossi-foundation",
         "repo": "nix-eda",
-        "rev": "8a8e673d5327d1ceaf039c1e647f487148c7bd85",
+        "rev": "2aa1145c9b07048329d7cc45350647f45da87373",
         "type": "github"
       },
       "original": {
         "owner": "fossi-foundation",
-        "ref": "7.11.0",
+        "ref": "7.19.0",
         "repo": "nix-eda",
         "type": "github"
       }

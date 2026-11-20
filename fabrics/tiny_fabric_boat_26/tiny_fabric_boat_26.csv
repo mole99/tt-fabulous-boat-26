@@ -1,8 +1,7 @@
 FabricBegin,,,,
-NW_term,N_term,N_term,N_term,N_term,NE_term
+NW_term,N_SRAM,N_SRAM,N_SRAM,N_SRAM,NE_term
 W_IO4,LUT4x8_ha,LUT4x8_ha,LUT4x8_ha,LUT4x8_ha,E_IO4
 W_IO4,LUT4x8_ha,LUT4x8_ha,LUT4x8_ha,LUT4x8_ha,E_IO4
-W_term,LUT4x8_ha,LUT4x8_ha,LUT4x8_ha,LUT4x8_ha,E_term
 W_term,LUT4x8_ha,LUT4x8_ha,LUT4x8_ha,LUT4x8_ha,E_term
 W_term,LUT4x8_ha,LUT4x8_ha,LUT4x8_ha,LUT4x8_ha,E_term
 SW_term,S_IO2,S_IO4,S_IO4,S_term,SE_term
@@ -36,5 +35,7 @@ Tile,../../ip/fabulous-tiles/tiles/tiny/NE_term/NE_term.csv,,,
 Tile,../../ip/fabulous-tiles/tiles/tiny/NW_term/NW_term.csv,,,
 Tile,../../ip/fabulous-tiles/tiles/tiny/SE_term/SE_term.csv,,,
 Tile,../../ip/fabulous-tiles/tiles/tiny/SW_term/SW_term.csv,,,
+,,,,
+Tile,../../ip/extra-tiles/tiles/tiny/N_SRAM/N_SRAM.csv,,,
 ,,,,
 ParametersEnd,,,,
