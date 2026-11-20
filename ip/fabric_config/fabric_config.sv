@@ -33,16 +33,28 @@ module fabric_config #(
     
     // To the fabric
     output logic [(FRAME_BITS_PER_ROW*FABRIC_NUM_ROWS)-1:0]    frame_data_o,
-    output logic [(MAX_FRAMES_PER_COL*FABRIC_NUM_COLUMNS)-1:0] frame_strobe_o
+    output logic [(MAX_FRAMES_PER_COL*FABRIC_NUM_COLUMNS)-1:0] frame_strobe_o,
+    
+    // To the memories
+    output logic [4:0] memory_coord_x_o,
+    output logic [4:0] memory_coord_y_o,
+    output logic       memory_coord_valid_o,
+    
+    output logic [30:0] memory_data_o,
+    output logic        memory_data_valid_o
 );
     localparam logic [31:0] BITSTREAM_START = 32'hFAB0FAB1;
-    localparam logic [31:0] DESYNC_FLAG = 20;
+
+    localparam DESYNC_FLAG = 20;
+    localparam MEMORY_FLAG = 21;
+    localparam MEMORY_DONE_FLAG = 31;
     
     // States
     typedef enum {
         S_IDLE,
         S_HEADER,
-        S_DATA
+        S_DATA,
+        S_MEMORY
     } state_t;
     
     state_t curr_state;
@@ -66,9 +78,12 @@ module fabric_config #(
                 if (bitstream_valid_i && bitstream_data_i == BITSTREAM_START) next_state = S_HEADER;
             S_HEADER:
                 if (bitstream_valid_i && bitstream_data_i[DESYNC_FLAG]) next_state = S_IDLE;
+                else if (bitstream_valid_i && bitstream_data_i[MEMORY_FLAG]) next_state = S_MEMORY;
                 else if (bitstream_valid_i) next_state = S_DATA;
             S_DATA:
                 if (bitstream_valid_i && row_select == 0) next_state = S_HEADER;
+            S_MEMORY:
+                if (bitstream_valid_i && bitstream_data_i[MEMORY_DONE_FLAG]) next_state = S_HEADER;
         endcase
     end
 
@@ -101,9 +116,19 @@ module fabric_config #(
             frame_select  <= '0;
             frame_strobe  <= '0;
             row_select    <= '0;
+            
+            memory_coord_x_o <= '0;
+            memory_coord_y_o <= '0;
+            memory_coord_valid_o <= '0;
+            
+            memory_data_o <= '0;
+            memory_data_valid_o <= '0;
         end else begin
             // Default frame strobe value
             frame_strobe <= 1'b0;
+            
+            memory_data_valid_o  <= 1'b0;
+            memory_coord_valid_o <= '0;
             
             case (curr_state)
                 S_IDLE: begin
@@ -111,15 +136,27 @@ module fabric_config #(
                     frame_select  <= '0;
                     frame_strobe  <= '0;
                     row_select    <= '0;
+                    
+                    memory_coord_x_o <= '0;
+                    memory_coord_y_o <= '0;
+                    memory_coord_valid_o <= '0;
+                    
+                    memory_data_o <= '0;
+                    memory_data_valid_o <= '0;
                 end
                 S_HEADER: begin
-                    if (bitstream_valid_i && !bitstream_data_i[DESYNC_FLAG]) begin
+                    if (bitstream_valid_i && !bitstream_data_i[DESYNC_FLAG] && !bitstream_data_i[MEMORY_FLAG]) begin
                         // Select frame and column
                         frame_select <= bitstream_data_i[MAX_FRAMES_PER_COL-1:0];
                         column_select <= bitstream_data_i[FRAME_BITS_PER_ROW-1:FRAME_BITS_PER_ROW-FRAME_SELECT_WIDTH];
                         
                         // Set row_select to maximum + 1
                         row_select <= FABRIC_NUM_ROWS-1;
+                    end else if (bitstream_valid_i && !bitstream_data_i[DESYNC_FLAG] && bitstream_data_i[MEMORY_FLAG]) begin
+                        // This is for a memory frame
+                        memory_coord_x_o <= bitstream_data_i[4:0];
+                        memory_coord_y_o <= bitstream_data_i[9:5];
+                        memory_coord_valid_o <= 1'b1;
                     end
                 end
                 S_DATA: begin
@@ -132,6 +169,12 @@ module fabric_config #(
                             // Write frame
                             frame_strobe <= 1'b1;
                         end
+                    end
+                end
+                S_MEMORY: begin
+                    if (bitstream_valid_i) begin
+                        memory_data_o <= bitstream_data_i[30:0];
+                        memory_data_valid_o <= 1'b1;
                     end
                 end
             endcase
