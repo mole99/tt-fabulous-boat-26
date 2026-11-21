@@ -68,16 +68,16 @@
         "nix-eda": "nix-eda"
       },
       "locked": {
-        "lastModified": 1795166529,
+        "lastModified": 1795266805,
         "narHash": "sha256-by+Ah6FjE+zfH5eYCh2hUeO1pqrdxkEv89P8+fIyh3U=",
         "owner": "librelane",
         "repo": "librelane",
-        "rev": "e40a1dc705ea9a748019ba13af3d70c133dcc074",
+        "rev": "8c20e015c667ec53096a1b0198755ae6c0bf9892",
         "type": "github"
       },
       "original": {
         "owner": "librelane",
-        "ref": "leo/update-pdks",
+        "ref": "dev",
         "repo": "librelane",
         "type": "github"
       }

@@ -9,7 +9,7 @@
   };
 
   inputs = {
-    librelane.url = "github:librelane/librelane/leo/update-pdks";
+    librelane.url = "github:librelane/librelane/dev";
     librelane_plugin_fabulous = {
       url = "github:mole99/librelane_plugin_fabulous/1.17.0";
       inputs.librelane.follows = "librelane";
