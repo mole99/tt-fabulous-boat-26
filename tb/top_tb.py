@@ -26,7 +26,7 @@ FRAME_SELECT_WIDTH = 5 # hardcoded, should be based on FABRIC_NUM_COLUMNS
 BITSTREAM_START = 0xFAB0FAB1
 DESYNC_FLAG = 20
 
-NUM_ROWS = 4
+NUM_ROWS = 6
 NUM_COLUMNS = 6
 
 async def send_word(dut, word):
@@ -136,6 +136,70 @@ async def test_top_counter(dut):
     
     assert dut.uo_out.value == NUM_CYCLES-1
 
+@cocotb.test()
+async def test_memory_init(dut):
+    """Load bitstream for memory_init"""
+
+    cocotb.start_soon(Clock(dut.clk, 10, 'ns').start())
+    
+    # Reset inputs
+    dut.ui_in.value = 0
+    dut.uio_in.value = 0
+    
+    # Reset configuration
+    dut.rst_n.value = 1
+    await ClockCycles(dut.clk, 10)
+
+    # Enable configuration
+    dut.rst_n.value = 0
+
+    # Upload the bitstream
+    await clear_bitstream(dut)
+    await upload_bitstream(dut, proj_path / f'../user_designs/designs/{tile_library}/memory_init/memory_init.bit')
+    await ClockCycles(dut.clk, 10)
+    
+    # Disable configuration
+    dut.rst_n.value = 1
+
+    await ClockCycles(dut.clk, 10)
+    
+    golden_text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+    
+    text = ""
+    for i in range(256):
+        dut.ui_in.value = i
+        await ClockCycles(dut.clk, 2)
+        print(dut.uo_out.value)
+        text += chr(int(dut.uo_out.value))
+
+    print(text)
+    
+    assert text in golden_text
+
+#@cocotb.test()
+async def test_load_memory(dut):
+    """Load bitstream for load_memory"""
+
+    cocotb.start_soon(Clock(dut.clk, 10, 'ns').start())
+
+    # Reset configuration
+    dut.rst_n.value = 1
+    await ClockCycles(dut.clk, 10)
+
+    # Enable configuration
+    dut.rst_n.value = 0
+
+    # Upload the bitstream
+    await clear_bitstream(dut)
+    await upload_bitstream(dut, proj_path / f'../user_designs/load_memory/load_memory.bit')
+    await ClockCycles(dut.clk, 10)
+    
+    # Disable configuration
+    dut.rst_n.value = 1
+
+    NUM_CYCLES = 123
+    await ClockCycles(dut.clk, NUM_CYCLES)
+
 if __name__ == "__main__":
 
     sim = os.getenv("SIM", "icarus")
@@ -156,9 +220,16 @@ if __name__ == "__main__":
     primitives_path = Path(tiles_path) / "primitives"
     tile_library_path = Path(tiles_path) / "tiles" / tile_library
     
+    extra_tiles_path = Path(proj_path / ".." / "ip" / "extra-tiles")
+    extra_primitives_path = Path(extra_tiles_path) / "primitives"
+    extra_tile_library_path = Path(extra_tiles_path) / "tiles" / tile_library
+    
     sources = []
     defines = {}
     test_filter = None
+    
+    # SRAM
+    sources.append(Path(pdk_root) / pdk / "libs.ref/gf180mcu_ocd_ip_sram/verilog/gf180mcu_ocd_ip_sram__sram256x8m8wm1.v")
     
     # RTL
     if not gl:
@@ -175,7 +246,16 @@ if __name__ == "__main__":
     
         sources.extend(primitives_files)
         sources.extend(tile_files)
+
+        extra_primitives_files = list(extra_primitives_path.glob('**/fabulous/*.v'))
+        extra_tile_files = list(extra_tile_library_path.glob(f'**/macro/{pdk}/fabulous/*.v'))
+
+        #print(f"Extra primitive sources: {extra_primitives_files}")
+        #print(f"Extra tile sources: {extra_tile_files}")
     
+        sources.extend(extra_primitives_files)
+        sources.extend(extra_tile_files)
+
         # Add models pack
         sources.append(tiles_path / "models_pack.v")
 
@@ -186,6 +266,7 @@ if __name__ == "__main__":
         sources.append(proj_path / f'../fabrics/{fabric}/macro/{pdk}/fabulous/{fabric}.v')
     
         sources.append(proj_path / f"../src/{hdl_toplevel}.sv")
+        sources.append(proj_path / f"../src/memory_connect.sv")
         sources.append(proj_path / f"../ip/fabric_config/fabric_config.sv")
         sources.append(proj_path / f"../ip/fabric_bitbang/fabric_bitbang.sv")
     
@@ -218,7 +299,16 @@ if __name__ == "__main__":
     
         sources.extend(primitives_files)
         sources.extend(tile_files)
+
+        extra_primitives_files = list(extra_primitives_path.glob('**/fabulous/*.v'))
+        extra_tile_files = list(extra_tile_library_path.glob(f'**/macro/{pdk}/fabulous/*.v'))
+
+        #print(f"Extra primitive sources: {extra_primitives_files}")
+        #print(f"Extra tile sources: {extra_tile_files}")
     
+        sources.extend(extra_primitives_files)
+        sources.extend(extra_tile_files)
+ 
         # Add models pack
         sources.append(tiles_path / "models_pack.v")
 

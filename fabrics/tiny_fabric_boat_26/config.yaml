@@ -27,7 +27,9 @@ GND_NETS: [VGND]
 
 # FABulous config
 FABULOUS_FABRIC_CONFIG: dir::tiny_fabric_boat_26.csv
-FABULOUS_TILE_LIBRARY: dir::../../ip/fabulous-tiles/tiles/tiny/
+FABULOUS_TILE_LIBRARY: 
+- dir::../../ip/fabulous-tiles/tiles/tiny/
+- dir::../../ip/extra-tiles/tiles/tiny/
 
 FABULOUS_TILE_SPACING: 0
 FABULOUS_HALO_SPACING: [ 0, 0, 0, 0 ]
