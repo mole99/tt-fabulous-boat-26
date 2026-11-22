@@ -27,13 +27,29 @@ module tt_um_fabulous_boat_26 (
     
     wire [31:0] bitstream_data;
     wire        bitstream_valid;
+    
+    // Sync sample
+    logic [1:0] sample_d;
+    logic sample_sync;
+    always_ff @(posedge clk) begin
+        sample_d <= {sample_d[0], ui_in[0]};
+    end
+    assign sample_sync = sample_d[1];
+    
+    // Sync data
+    logic [1:0] data_d;
+    logic data_sync;
+    always_ff @(posedge clk) begin
+        data_d <= {data_d[0], ui_in[1]};
+    end
+    assign data_sync = data_d[1];
 
     fabric_bitbang fabric_bitbang (
         .clk_i   (clk),
         .rst_ni  (!rst_n), // inverted polarity: config is active when the design is not
 
-        .sample_i (ui_in[0]),
-        .data_i   (ui_in[1]),
+        .sample_i (sample_sync),
+        .data_i   (data_sync),
 
         // Bitstream data
         .bitstream_data_o   (bitstream_data),
