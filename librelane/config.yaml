@@ -150,3 +150,34 @@ INSERT_ECO_DIODES:
 - target: tiny_fabric_boat_26/Tile_X0Y1_B_OUT_top
 - target: tiny_fabric_boat_26/Tile_X0Y1_C_OUT_top
 - target: tiny_fabric_boat_26/Tile_X0Y1_D_OUT_top
+
+DESIGN_REPAIR_MAX_WIRE_LENGTH: 500
+
+# Image render settings
+KLAYOUT_RENDER_RESOLUTION: 2048
+KLAYOUT_RENDER_OVERSAMPLING: 3
+KLAYOUT_PROPERTIES: dir::gf180mcu_render.lyp
+
+# DRC settings
+# A high number of workers increases RAM usage,
+# but can significantly improve the performance.
+# workers * threads should equal the available
+# hardware threads for a best possible utilization.
+
+KLAYOUT_DRC_THREADS: 1
+
+# "max" equals max hardware threads
+KLAYOUT_DRC_OPTIONS:
+  decks: "all,-antenna,-density,-cup"
+  variant: ref::$PDK
+  workers: max
+
+KLAYOUT_DENSITY_OPTIONS:
+  decks: "density"
+  variant: ref::$PDK
+  workers: max
+
+KLAYOUT_ANTENNA_OPTIONS:
+  decks: "antenna"
+  variant: ref::$PDK
+  workers: max
