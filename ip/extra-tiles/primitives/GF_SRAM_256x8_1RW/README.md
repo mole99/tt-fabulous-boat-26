@@ -1,22 +1,24 @@
-# IHP_SRAM_1024x32
+# GF_SRAM_256x8_1RW
 
-The `IHP_SRAM_1024x32` primitive provides an SRAM with 1024x32 bits of data and one synchronous read/write port.
-It has a per-bit write mask (`BM`) which allows to only write individual bits or bytes of data.
+The `GF_SRAM_256x8_1RW` primitive provides an SRAM with 256x8 bits of data and one synchronous read/write port.
+It features a per-bit write enable (`WEN_N`), which allows to only write individual bits or bytes of data.
 
-When `WEN` and `REN` is active at the same time, the SRAM will return the current `DIN` at `DOUT`.
-
-![IHP_SRAM_1024x32](images/svg/IHP_SRAM_1024x32.svg){align=center}
+![GF_SRAM_256x8_1RW](images/svg/GF_SRAM_256x8_1RW.svg){align=center}
 
 ## Signals
 
 | Name          | Direction | Width | Description              |
 |---------------|-----------|-------|--------------------------|
 | CLK           | input     | 1     | The clock input for the R/W port. |
-| ADDR          | input     | 5     | The address for the R/W port. |
-| DIN           | input     | 4     | The write data.          |
-| BM            | input     | 4     | The per-bit write mask.  |
-| WEN           | input     | 1     | The write enable signal. |
-| WEN           | input     | 1     | The memory enable signal. |
-| REN           | input     | 1     | The read enable signal.  |
-| DOUT          | output    | 4     | The read data.           |
+| A             | input     | 8     | The address for the R/W port. |
+| D             | input     | 8     | The write data.          |
+| WEN_N         | input     | 8     | The per-bit write mask (inverted).  |
+| GWEN_N        | input     | 1     | The global write enable signal (inverted). |
+| CEN_N         | input     | 1     | The memory enable signal (inverted). |
+| Q             | output    | 8     | The read data.           |
 
+## Attributes
+
+| Name          | Width | Description              |
+|---------------|-------|--------------------------|
+| CLK_INV       | 1     | Invert the clock signal. |
