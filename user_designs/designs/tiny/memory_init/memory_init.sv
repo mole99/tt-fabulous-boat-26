@@ -11,15 +11,10 @@ module memory_init #(
     input  wire       rst_n,
     
     input  wire [ADDR_BITS-1:0] addr,
-    
-    // Input word
     input  wire [WORD_BITS-1:0] data_i,
-    
-    // Output words
     output wire [WORD_BITS-1:0] data_o
 );
-
-    (* keep  *) logic [7:0] mem [256];
+    logic [7:0] mem [256];
     
     initial begin
         $readmemh("lorem_ipsum.hex", mem);
