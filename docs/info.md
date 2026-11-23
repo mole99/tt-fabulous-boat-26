@@ -11,12 +11,14 @@ You can also include images in this folder and reference them in the markdown. E
 
 Tiny FABulous FPGA (BOAT 26 version).
 
-This design implements a tiny FPGA with 160 LUT4+FF. The FPGA fabric is 6x7 tiles in size, of which 4x5 are LUT4x8_ha tiles.
-The logic cells include a vertical carry-chain in upwards direction, allowing for fast additions up to 39-bits.
+![Tiny FABulous FPGA (BOAT 26 version)](images/tt_um_fabulous_boat_26.png)
 
-The I/Os resemble the Tiny Tapeout interface, allowing for clk, rst_n, uo, ui and uio signals. This enables to directly implement simple Tiny Tapeout designs on the FPGA.
+This design implements a tiny FPGA with 128 LUT4+FF anf 4 SRAMs (256x8). The FPGA fabric is 6x6 tiles in size, of which 4x4 are LUT4x8_ha tiles.
+The logic cells include a vertical carry-chain in upwards direction, enabling fast additions up to 31-bits (one LC for the start of the carry-chain).
 
-The user design is synthesized using Yosys and implemented using nextpnr (currently forks are required to be used, but the changes will be upstreamed).
+The I/Os resemble the Tiny Tapeout interface and allow for clk, rst_n, uo, ui and uio signals. This makes it possible to implement simple Tiny Tapeout designs directly on the FPGA.
+
+The user design is synthesized using Yosys and implemented using nextpnr. Make sure to use the correct versions or the provided Nix flake.
 
 The bitstream is uploaded to the fabric using a bitbang interface (see how to test). The bitbang interface is active while reset is applied, this ensures that all I/Os are available for the active user design.
 
@@ -24,7 +26,8 @@ The exact available resources can be seen in this table:
 
 | Primitive | Available | Description |
 |---|---|---|
-| FABULOUS_LC | 160  | Logic cells with LUT4+FF and carry-chain. |
+| FABULOUS_LC | 128  | Logic cells with LUT4+FF and carry-chain. |
+| GF_SRAM_256x8_1RW | 4  | SRAM with 256x8 bits of data and one synchronous read/write port. |
 | IOBUF | 26  | Input/output buffers. |
 | GBUF | 4  | Global buffers to supply clock, reset and enable to the flip-flops. |
 | SYS_RESET | 1 | Can be used to reset the design after configuration. |

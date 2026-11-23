@@ -2,6 +2,14 @@
 
 # Tiny FABulous FPGA - (BOAT 26 version)
 
+A tiny FABulous FPGA for BOAT 26
+
+<p align="center">
+  <a href="docs/images/tt_um_fabulous_boat_26.png">
+    <img src="docs/images/tt_um_fabulous_boat_26.png" alt="Tiny FABulous FPGA - (BOAT 26 version)" width=45%>
+  </a>
+</p>
+
 - [Read the documentation for the project](docs/info.md)
 - [View the layout in your browser (BOAT 26 version)](https://gds-viewer.tinytapeout.com/?model=https://raw.githubusercontent.com/mole99/tt-fabulous-boat-26/refs/heads/main/gds/tt_um_fabulous_boat_26.gds&pdk=gf180mcuD)
 
