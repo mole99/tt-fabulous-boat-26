@@ -16,6 +16,7 @@ all: $(FABRICS)
 
 tiles:
 	cd ip/fabulous-tiles/; PDK=${PDK} SCL=${SCL} TILE_LIBRARY=${TILE_LIBRARY} nix develop --command make all
+	cd ip/extra-tiles/; PDK=${PDK} SCL=${SCL} TILE_LIBRARY=${TILE_LIBRARY} nix develop --command make all
 .PHONY: tiles
 
 $(FABRICS):

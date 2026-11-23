@@ -46,23 +46,51 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           nix_cache_domain: ${{ vars.NIX_CACHE }}
           nix_public_key: ${{ vars.NIX_PUBLIC_KEY }}
-      - name: Build with Nix
-        uses: ./.github/actions/build_nix
-        with:
-          nix_system: x86_64-linux
-          derivation: github:mole99/librelane_plugin_fabulous
+      - name: Get the tile library hash
+        run: |
+          echo "TILE_LIBRARY_SHORT_HASH=$(git rev-parse --short HEAD:ip/fabulous-tiles)" >> $GITHUB_ENV
       - name: Cache the tiles
         uses: actions/cache@v5
         with:
           path: ip/fabulous-tiles/tiles
-          key: cache-tiles-${{ matrix.tile_library }}-${{ matrix.pdk }}-${{ matrix.scl }}-${{ github.sha }}
+          key: cache-tiles-${{ matrix.tile_library }}-${{ matrix.pdk }}-${{ matrix.scl }}-${{ env.TILE_LIBRARY_SHORT_HASH }}
       - name: Implement the tiles
         run: |
-          make tiles
+          cd ip/fabulous-tiles/; PDK=${{ matrix.pdk }} SCL=${{ matrix.scl }} TILE_LIBRARY=${{ matrix.tile_library }} nix develop --command make all
+
+  extra-tiles:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        pdk: [gf180mcuD]
+        tile_library: [tiny]
+        scl: [gf180mcu_as_sc_mcu7t3v3]
+    name: Extra Tiles (${{ matrix.tile_library }}/${{ matrix.pdk }}/${{ matrix.scl }})
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: 'true'
+      - name: Setup Nix
+        uses: ./.github/actions/setup_nix
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get the tile library hash
+        run: |
+          echo "EXTRA_TILE_LIBRARY_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - name: Cache the tiles
+        uses: actions/cache@v5
+        id: cache
+        with:
+          path: ip/extra-tiles/tiles
+          key: cache-extra-tiles-${{ matrix.tile_library }}-${{ matrix.pdk }}-${{ matrix.scl }}-${{ env.EXTRA_TILE_LIBRARY_SHORT_HASH }}
+      - name: Implement the tiles
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          cd ip/extra-tiles/; PDK=${{ matrix.pdk }} SCL=${{ matrix.scl }} TILE_LIBRARY=${{ matrix.tile_library }} nix develop --command make all
 
   fabrics:
     runs-on: ubuntu-24.04
-    needs: [tiles]
+    needs: [tiles, extra-tiles]
     strategy:
       matrix:
         pdk: [gf180mcuD]
@@ -92,14 +120,25 @@ jobs:
         with:
           nix_system: x86_64-linux
           derivation: github:mole99/librelane_plugin_fabulous
+      - name: Set up the PDK
+        run: |
+          nix develop --command ciel enable --pdk-family gf180mcuD 2fdf40d5736413bb321c31418462aefc17b919b8 -l gf180mcu_as_sc_mcu7t3v3 -l gf180mcu_ocd_ip_sram
       - name: Get the tile library
         run: |
           echo "TILE_LIBRARY=$(echo "${{ matrix.fabrics }}" | cut -d'_' -f1)" >> $GITHUB_ENV
-      - name: Restore the tiles
+          echo "TILE_LIBRARY_SHORT_HASH=$(git rev-parse --short HEAD:ip/fabulous-tiles)" >> $GITHUB_ENV
+          echo "REPO_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - name: Restore Tiles
         uses: actions/cache/restore@v5
         with:
           path: ip/fabulous-tiles/tiles
-          key: cache-tiles-${{ env.TILE_LIBRARY }}-${{ matrix.pdk }}-${{ matrix.scl }}-${{ github.sha }}
+          key: cache-tiles-${{ env.TILE_LIBRARY }}-${{ matrix.pdk }}-${{ matrix.scl }}-${{ env.TILE_LIBRARY_SHORT_HASH }}
+          fail-on-cache-miss: true
+      - name: Restore Extra Tiles
+        uses: actions/cache/restore@v5
+        with:
+          path: ip/extra-tiles/tiles
+          key: cache-extra-tiles-${{ env.TILE_LIBRARY }}-${{ matrix.pdk }}-${{ matrix.scl }}-${{ env.REPO_SHORT_HASH }}
           fail-on-cache-miss: true
       - name: Stitch the tiles
         run: |
@@ -131,9 +170,6 @@ jobs:
       - name: Simulate the FPGA RTL (Simulation)
         run: |
           PDK=${{ matrix.pdk }} SCL=${{ matrix.scl }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ matrix.fabrics }} nix develop --command bash -c "cd tb; python3 top_tb.py"
-      - name: Set up the PDK
-        run: |
-          nix develop --command ciel enable --pdk-family gf180mcuD 792ef67037d74c8c51811eab3ce23cf793491296 --include-libraries all
       - name: Simulate the FPGA RTL/GL (Simulation)
         run: |
           GL=1 PDK=${{ matrix.pdk }} SCL=${{ matrix.scl }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ matrix.fabrics }} nix develop --command bash -c "cd tb; python3 top_tb.py"

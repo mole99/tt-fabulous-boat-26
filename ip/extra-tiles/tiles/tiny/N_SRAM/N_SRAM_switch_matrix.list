@@ -1,0 +1,60 @@
+# N_SRAM
+
+# single just go back, we swap bits in vector to get more twists into the graph
+S1BEG[0|1|2|3|4|5|6|7],N1END[7|6|5|4|3|2|1|0]
+S1BEG[0|1|2|3|4|5|6|7],N2END[7|6|5|4|3|2|1|0]
+S1BEG[0|1|2|3|4|5|6|7],N2MID[7|6|5|4|3|2|1|0]
+#S1BEG[0|1|2|3|4|5|6|7],[A_OUT|A_OUT|A_OUT|A_OUT|A_OUT|A_OUT|A_OUT|A_OUT]
+
+# The MID are half way in so they get connected to the longest patch (S2BEG)
+# The END are longest so get on the cascading begin (S2BEGb)
+# on top we twist wire indexes for more entropy
+S2BEGb[0|1|2|3|4|5|6|7],N1END[7|6|5|4|3|2|1|0]
+S2BEGb[0|1|2|3|4|5|6|7],N2END[7|6|5|4|3|2|1|0]
+S2BEGb[0|1|2|3|4|5|6|7],N2MID[7|6|5|4|3|2|1|0]
+#S2BEGb[0|1|2|3|4|5|6|7],[A_OUT|A_OUT|A_OUT|A_OUT|A_OUT|A_OUT|A_OUT|A_OUT]
+
+S2BEG[0|1|2|3|4|5|6|7],N1END[7|6|5|4|3|2|1|0]
+S2BEG[0|1|2|3|4|5|6|7],N2END[7|6|5|4|3|2|1|0]
+S2BEG[0|1|2|3|4|5|6|7],N2MID[7|6|5|4|3|2|1|0]
+#S2BEG[0|1|2|3|4|5|6|7],[A_OUT|A_OUT|A_OUT|A_OUT|A_OUT|A_OUT|A_OUT|A_OUT]
+
+# -------------------------------------
+
+# It's not possible to connect all of the SRAM's inputs at once:
+# we only have 3*8=24 wires into the tile, but the SRAM requires 
+# A,D,WEN_N (24) plus GWEN_N and CEN_N.
+# We can, however, increase the situations where it's still
+# possible to route if other signals are unused/duplicated.
+
+[A_CLK|A_CLK],[VCC0|GND0]
+[A_CLK|A_CLK|A_CLK|A_CLK],N_GBUF_END[0|1|2|3]
+
+A_A[0|1|2|3|4|5|6|7],[VCC0|VCC0|VCC0|VCC0|VCC0|VCC0|VCC0|VCC0]
+A_A[0|1|2|3|4|5|6|7],[GND0|GND0|GND0|GND0|GND0|GND0|GND0|GND0]
+A_A[0|1|2|3|4|5|6|7],N1END[7|6|5|4|3|2|1|0]
+
+A_D[0|1|2|3|4|5|6|7],[VCC0|VCC0|VCC0|VCC0|VCC0|VCC0|VCC0|VCC0]
+A_D[0|1|2|3|4|5|6|7],[GND0|GND0|GND0|GND0|GND0|GND0|GND0|GND0]
+A_D[0|1|2|3|4|5|6|7],N2END[7|6|5|4|3|2|1|0]
+
+A_WEN_N[0|1|2|3|4|5|6|7],[VCC0|VCC0|VCC0|VCC0|VCC0|VCC0|VCC0|VCC0]
+A_WEN_N[0|1|2|3|4|5|6|7],[GND0|GND0|GND0|GND0|GND0|GND0|GND0|GND0]
+A_WEN_N[0|1|2|3|4|5|6|7],N2MID[0|0|0|0|0|0|0|0]
+A_WEN_N[0|1|2|3|4|5|6|7],N2MID[1|1|1|1|0|0|0|0]
+A_WEN_N[0|1|2|3|4|5|6|7],N2MID[3|3|2|2|1|1|0|0]
+A_WEN_N[0|1|2|3|4|5|6|7],N2MID[7|6|5|4|3|2|1|0]
+
+[A_GWEN_N|A_GWEN_N],[VCC0|GND0]
+[A_CEN_N|A_CEN_N],[VCC0|GND0]
+
+[A_GWEN_N|A_GWEN_N],N1END[5|4]
+[A_CEN_N|A_CEN_N],N1END[7|6]
+
+[A_GWEN_N|A_GWEN_N],N2END[5|4]
+[A_CEN_N|A_CEN_N],N2END[7|6]
+
+[A_GWEN_N|A_GWEN_N],N2MID[5|4]
+[A_CEN_N|A_CEN_N],N2MID[7|6]
+
+S1BEG[0|1|2|3|4|5|6|7],A_Q[0|1|2|3|4|5|6|7]

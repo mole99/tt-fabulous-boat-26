@@ -34,9 +34,9 @@ if __name__ == "__main__":
     primitives_path = Path(tiles_path) / "primitives"
     tile_library_path = Path(tiles_path) / "tiles" / tile_library
 
-    if emulation and gl:
-        print("Error: EMULATION and GL can't be set at the same time.")
-        sys.exit(1)
+    extra_tiles_path = Path(proj_path / ".." / "ip" / "extra-tiles")
+    extra_primitives_path = Path(extra_tiles_path) / "primitives"
+    extra_tile_library_path = Path(extra_tiles_path) / "tiles" / tile_library
     
     sources = []
     defines = {}
@@ -54,9 +54,18 @@ if __name__ == "__main__":
 
         #print(f"Primitive sources: {primitives_files}")
         #print(f"Tile sources: {tile_files}")
-        
+    
         sources.extend(primitives_files)
         sources.extend(tile_files)
+
+        extra_primitives_files = list(extra_primitives_path.glob('**/fabulous/*.v'))
+        extra_tile_files = list(extra_tile_library_path.glob(f'**/macro/{pdk}/fabulous/*.v'))
+
+        #print(f"Extra primitive sources: {extra_primitives_files}")
+        #print(f"Extra tile sources: {extra_tile_files}")
+    
+        sources.extend(extra_primitives_files)
+        sources.extend(extra_tile_files)
         
         # Add models pack
         sources.append(tiles_path / "models_pack.v")
