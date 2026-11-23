@@ -13,7 +13,7 @@ Tiny FABulous FPGA (BOAT 26 version).
 
 ![Tiny FABulous FPGA (BOAT 26 version)](images/tt_um_fabulous_boat_26.png)
 
-This design implements a tiny FPGA with 128 LUT4+FF anf 4 SRAMs (256x8). The FPGA fabric is 6x6 tiles in size, of which 4x4 are LUT4x8_ha tiles.
+This design implements a tiny FPGA with 128 LUT4+FF and 4 SRAMs (256x8). The FPGA fabric is 6x6 tiles in size, of which 4x4 are LUT4x8_ha tiles.
 The logic cells include a vertical carry-chain in upwards direction, enabling fast additions up to 31-bits (one LC for the start of the carry-chain).
 
 The I/Os resemble the Tiny Tapeout interface and allow for clk, rst_n, uo, ui and uio signals. This makes it possible to implement simple Tiny Tapeout designs directly on the FPGA.
