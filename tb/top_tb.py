@@ -111,6 +111,50 @@ async def test_top_addition(dut):
         assert dut.uo_out.value == result
 
 @cocotb.test()
+async def test_top_gf_sram_256x8_1rw(dut):
+    """Load bitstream for top_gf_sram_256x8_1rw"""
+
+    cocotb.start_soon(Clock(dut.clk, 10, 'ns').start())
+
+    # defaults
+    dut.ui_in.value = 0
+    dut.uio_in.value = 0
+
+    # Reset configuration
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 10)
+
+    # Enable configuration
+    dut.rst_n.value = 0
+
+    # Upload the bitstream
+    await clear_bitstream(dut)
+    await upload_bitstream(dut, proj_path / f'../user_designs/designs/{tile_library}/top_gf_sram_256x8_1rw/top_gf_sram_256x8_1rw.bit')
+    await ClockCycles(dut.clk, 10)
+    
+    # Disable configuration
+    dut.rst_n.value = 1 # Well... rst_n is our rw signal, write
+    
+    await ClockCycles(dut.clk, 10)
+    
+    # Fill the memory with data
+    for i in range(256):
+        dut.ui_in.value = i # address
+        dut.uio_in.value = i # data
+        await ClockCycles(dut.clk, 1)
+
+    dut.rst_n.value = 0 # now, read
+
+    await ClockCycles(dut.clk, 10)
+    
+    # Read from both read ports
+    for i in range(256):
+        dut.ui_in.value = i # address
+        await ClockCycles(dut.clk, 2)
+        
+        assert(dut.uo_out.value == i)
+
+@cocotb.test()
 async def test_top_counter(dut):
     """Load bitstream for top_counter"""
 

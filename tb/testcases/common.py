@@ -93,7 +93,6 @@ async def upload_bitstream(dut, bitstream_path, delay=10):
                     data = f.read(4)
                     data = int.from_bytes(data, "big")
                 continue # read next header
-                
             
             # Read row data
             all_row_data = 0

@@ -151,6 +151,8 @@ set_io product[9] X0Y1/C
 
 # Memory
 
+set_io rw X1Y5/B
+
 set_io addr[0] X0Y2/A
 set_io addr[1] X0Y2/B
 set_io addr[2] X0Y2/C

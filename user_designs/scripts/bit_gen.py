@@ -220,8 +220,10 @@ def genBitstream(fasmFile: str, specFile: str, bitstreamFile: str):
     for loc, memory in memories.items():
     
         # Memory flag + Coords
-        X = int(loc[1])
-        Y = int(loc[3])
+        X, Y = loc.split("X")[1].split("Y")
+        X = int(X)
+        Y = int(Y)
+        
         bitStr += ((1<<MEMORY_FLAG | (Y<<5) | (X)).to_bytes(4, 'big'))
         
         for i, byte in enumerate(memory):
